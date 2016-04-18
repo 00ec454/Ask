@@ -20,7 +20,8 @@ public class MainActivity extends AppCompatActivity {
         Ask.on(this)
                 .forPermissions(Manifest.permission.ACCESS_COARSE_LOCATION
                         , Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .withRationales("Please Grant location access", "Application needs this to write files")
+                .withRationales("Location permission need for map to work properly",
+                        "In order to save file you will need to grant storage permission")
                 .when(new Ask.Permission() {
                     @Override
                     public void granted(List<String> permissions) {
