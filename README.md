@@ -31,7 +31,7 @@ Add the following code in your class and that is all you need. You can do all yo
 dependencies {
 	compile 'com.vistrav:ask:1.0'
 }
-
+```
 ##You can contribute!
 In case you think you have some improvement, please feel free do pull request your feature and I would be happy to include it. Let's make this Ask very easy to use and rich with features.
 
