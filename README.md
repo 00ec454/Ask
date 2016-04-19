@@ -7,9 +7,15 @@ After in marshmallow android has introduced runtime permission check that means 
 
 The android basic code to request permission is to complex and tedious to understand. **Ask** is a library make asking for the particular permission easy for developer. This is very simple and light wait library with just few lines of code and you good to go.
 
+## Demo( How it looks!)
+
+| Ask for permission     | Show rationale |
+| ---      | ---       |
+| ![show permission](https://github.com/00ec454/Ask/blob/master/asset/permission_1.png) | ![show rationale](https://github.com/00ec454/Ask/blob/master/asset/rationale.png)         |
+
 ## How to use.
 
-1. Very first step is to include this library in your project by adding following entry into your project's gradle dependencies
+* Very first step is to include this library in your project by adding following entry into your project's gradle dependencies
 
 ```groovy
 dependencies {
@@ -17,8 +23,8 @@ dependencies {
 }
 ```
 
-2. Adding the necessary permissions into your project manifest file
-3. Add the following code in your class to request the runtime permissions
+* Adding the necessary permissions into your project manifest file
+* Add the following code in your class to request the runtime permissions
 ```java
         Ask.on(context)
                 .forPermissions(Manifest.permission.ACCESS_COARSE_LOCATION
@@ -39,20 +45,13 @@ dependencies {
 
 ```
 
-4. Implement callback methods `granted` or `denied`
-⋅⋅1. the `granted` method provides the list of granted permissions.
-⋅⋅2. the `denied` method provides the list of denied permissions.
-5. The setting rationale message is optional but it would be good in case user has declined the permission, there is chance for developer to explain app user why specific permission is needed
+* Implement callback methods `granted` or `denied`
+ * the `granted` method provides the list of granted permissions.
+ * the `denied` method provides the list of denied permissions.
+* The setting rationale message is optional but it would be good in case user has declined the permission, there is chance for developer to explain app user why specific permission is needed
 
-`forPermissions` take one or more permissions as argument
-`withRationales` take one or more rationale message, usually it is good to provide same number of rationale messages as number of permissions
-
-## Demo( How it looks!)
-
-| Ask for permission     | Show rationale |
-| ---      | ---       |
-| ![show permission](https://github.com/00ec454/Ask/blob/master/asset/permission_1.png) | ![show rationale](https://github.com/00ec454/Ask/blob/master/asset/rationale.png)         |
-
+1. `forPermissions` method takes one or more permissions as argument
+2. `withRationales` method takes one or more rationale message, usually it is good to provide same number of rationale messages as number of permissions
 
 ##You can contribute!
 In case you think you have some improvement, please feel free do pull request your feature and I would be happy to include it. Let's make this Ask very easy to use and rich with features.
