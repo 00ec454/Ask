@@ -3,15 +3,13 @@ Android runtime permissions make easy
 
 # Why?
 
-After in marshmallow android has introduced runtime permission check that means when application runs every time application needs to ask for perticular
-permissions from user to run specific functionality. for example if you using Camera or saving files on external storage or location.
+After in marshmallow android has introduced runtime permission check that means when application runs every time application needs to ask for perticular permissions from user to run specific functionality. for example if you using Camera or saving files on external storage or location.
 
-The android basic code to request permission is to complex and tedious to understand. Ask is a library make asking for the particular permission
-easy for developer. This is very simple and light wait library with just few lines of code and you good to go.
+The android basic code to request permission is to complex and tedious to understand. **Ask** is a library make asking for the particular permission easy for developer. This is very simple and light wait library with just few lines of code and you good to go.
 
 ## How to use.
 
-Very first step is to include this library in your project by adding following entry into your project's gradle dependencies
+1. Very first step is to include this library in your project by adding following entry into your project's gradle dependencies
 
 ```groovy
 dependencies {
@@ -19,9 +17,8 @@ dependencies {
 }
 ```
 
-After adding the necessary permissions into your manifest file,
-Add the following code in your class and that is all you need. You can do all you want in `granted` or `denied` methods
-
+2. Adding the necessary permissions into your project manifest file
+3. Add the following code in your class to request the runtime permissions
 ```java
         Ask.on(context)
                 .forPermissions(Manifest.permission.ACCESS_COARSE_LOCATION
@@ -42,14 +39,19 @@ Add the following code in your class and that is all you need. You can do all yo
 
 ```
 
-The callback methods `granted` or `denied` will be called when permissions are granted or denied respectively with list of permissions as argument.
-you can then write your logic in these method based of permission granted or denied.
-
-The setting rationale message is optional but it would be good in case user has declined the permission, there is chance for developer to explain
-app user why specific permission is needed
+4. Implement callback methods `granted` or `denied`
+⋅⋅1. the `granted` method provides the list of granted permissions.
+⋅⋅2. the `denied` method provides the list of denied permissions.
+5. The setting rationale message is optional but it would be good in case user has declined the permission, there is chance for developer to explain app user why specific permission is needed
 
 `forPermissions` take one or more permissions as argument
 `withRationales` take one or more rationale message, usually it is good to provide same number of rationale messages as number of permissions
+
+## Demo( How it looks!)
+
+| Ask for permission     | Show rationale |
+| ---      | ---       |
+| ![show permission](https://github.com/00ec454/Ask/blob/master/asset/permission_1.png) | ![show rationale](https://github.com/00ec454/Ask/blob/master/asset/rationale.png)         |
 
 
 ##You can contribute!
