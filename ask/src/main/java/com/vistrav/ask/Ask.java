@@ -4,10 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Size;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +32,9 @@ public class Ask {
         return new Ask(context);
     }
 
-    public Ask forPermissions(@NonNull @Size(min=1) String... permissions) {
+    public Ask forPermissions(@NonNull @Size(min = 1) String... permissions) {
         if (permissions.length == 0) {
-            throw new IllegalArgumentException("The permissions missing");
+            throw new IllegalArgumentException("The permissions to request are missing");
         }
         this.permissions = permissions;
         return this;
@@ -44,10 +46,15 @@ public class Ask {
     }
 
     public void go() {
-        Intent intent = new Intent(context, AskActivity.class);
-        intent.putExtra(Constants.PERMISSIONS, permissions);
-        intent.putExtra(Constants.RATIONAL_MESSAGES, rationalMessages);
-        context.startActivity(intent);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            permissionObj.granted(Arrays.asList(permissions));
+            permissionObj.denied(new ArrayList<String>());
+        } else {
+            Intent intent = new Intent(context, AskActivity.class);
+            intent.putExtra(Constants.PERMISSIONS, permissions);
+            intent.putExtra(Constants.RATIONAL_MESSAGES, rationalMessages);
+            context.startActivity(intent);
+        }
     }
 
     public Ask when(@NonNull Permission permission) {

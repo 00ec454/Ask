@@ -22,24 +22,40 @@ import java.util.Map;
 
 public class AskActivity extends AppCompatActivity {
 
-    private Intent intent;
     private static final int PERMISSION_REQUEST = 100;
     @SuppressWarnings("unused")
     private static final String TAG = AskActivity.class.getSimpleName();
+    private String[] permissions;
+    private String[] rationaleMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-        intent = getIntent();
+        init(savedInstanceState);
         getPermissions();
     }
 
-    private void getPermissions() {
-        String[] permissions = intent.getStringArrayExtra(Constants.PERMISSIONS);
-        String[] rationalMessages = intent.getStringArrayExtra(Constants.RATIONAL_MESSAGES);
+    private void init(Bundle state) {
+        if (state != null) {
+            permissions = state.getStringArray(Constants.PERMISSIONS);
+            rationaleMessages = state.getStringArray(Constants.RATIONAL_MESSAGES);
+        } else {
+            Intent intent = getIntent();
+            permissions = intent.getStringArrayExtra(Constants.PERMISSIONS);
+            rationaleMessages = intent.getStringArrayExtra(Constants.RATIONAL_MESSAGES);
+        }
+    }
 
-        Map<String, List<String>> map = separatePermissions(permissions, rationalMessages);
+    @Override
+    public void onSaveInstanceState(Bundle state) {
+        state.putStringArray(Constants.PERMISSIONS, permissions);
+        state.putStringArray(Constants.RATIONAL_MESSAGES, rationaleMessages);
+    }
+
+    private void getPermissions() {
+
+        Map<String, List<String>> map = separatePermissions(permissions, rationaleMessages);
         List<String> neededPermissions = map.get(NEEDED_PERMISSIONS);
         final List<String> showRationaleFor = map.get(SHOW_RATIONAL_FOR);
         List<String> rationalMessagesToShow = map.get(RATIONALE_MESSAGES_TO_SHOW);
