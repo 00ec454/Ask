@@ -31,7 +31,7 @@ ext {
     siteUrl = 'https://github.com/00ec454/Ask'
     gitUrl = 'https://github.com/00ec454/Ask.git'
 
-    libraryVersion = '1.0'
+    libraryVersion = '1.1'
 
     developerId = '00ec454'
     developerName = 'Dharmesh Gohil'
@@ -49,3 +49,6 @@ dependencies {
 }
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
+
+// ./gradlew install
+// ./gradlew bintrayUpload
