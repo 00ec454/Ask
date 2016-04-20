@@ -26,7 +26,7 @@ dependencies {
 * Adding the necessary permissions into your project manifest file
 * Add the following code in your class to request the runtime permissions
 ```java
-        Ask.on(context)
+        Ask.on(activity)
                 .forPermissions(Manifest.permission.ACCESS_COARSE_LOCATION
                         , Manifest.permission.WRITE_EXTERNAL_STORAGE) //one or more permissions
                 .withRationales("Location permission need for map to work properly", 
