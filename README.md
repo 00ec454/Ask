@@ -5,7 +5,7 @@ Android runtime permissions make easy
 
 In marshmallow, android has introduced runtime permission check, that means when application runs, it asks user provide permission to run specific functionality. for example if you using Camera or saving files on external storage or location.
 
-The android basic code to request permission is to complex and tedious to understand (if you don't trust me, check [here](http://developer.android.com/training/permissions/requesting.html) :smiley: ). **Ask** is a library make asking for the particular permission easy for developer. This is very simple and light wait library with just few lines of code and you good to go.
+The android basic code to request permission is to complex and tedious to understand (if you don't trust me, check [here](http://developer.android.com/training/permissions/requesting.html) :smiley: ). **Ask** is a library make asking for the particular permission easy for developer. This is very simple and light weight library with just few lines of code and you good to go.
 
 ## Demo( How it looks!)
 
