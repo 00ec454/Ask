@@ -1,11 +1,12 @@
 # Ask
 Android runtime permissions make easy
 
+[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Ask-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/3465)
 # Why?
 
 In marshmallow, android has introduced runtime permission check, that means when application runs, it asks user provide permission to run specific functionality. for example if you using Camera or saving files on external storage or location.
 
-The android basic code to request permission is to complex and tedious to understand (if you don't trust me, check [here](http://developer.android.com/training/permissions/requesting.html) :smiley: ). **Ask** is a library make asking for the particular permission easy for developer. This is very simple and light wait library with just few lines of code and you good to go.
+The android basic code to request permission is to complex and tedious to understand (if you don't trust me, check [here](http://developer.android.com/training/permissions/requesting.html) :smiley: ). **Ask** is a library make asking for the particular permission easy for developer. This is very simple and light weight library with just few lines of code and you good to go.
 
 ## Demo( How it looks!)
 
@@ -26,7 +27,7 @@ dependencies {
 * Adding the necessary permissions into your project manifest file
 * Add the following code in your class to request the runtime permissions
 ```java
-        Ask.on(context)
+        Ask.on(activity)
                 .forPermissions(Manifest.permission.ACCESS_COARSE_LOCATION
                         , Manifest.permission.WRITE_EXTERNAL_STORAGE) //one or more permissions
                 .withRationales("Location permission need for map to work properly", 
@@ -57,6 +58,10 @@ dependencies {
 
 ##You can contribute!
 In case you think you have some improvement, please feel free do pull request your feature and I would be happy to include it. Let's make this Ask very easy to use and rich with features.
+
+##Other Userful Libraries
+#### pop - a quick android dialog building lib
+[![Github](https://img.shields.io/badge/github-pop-green.svg)](https://github.com/00ec454/pop) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Pop-green.svg?style=true)](https://android-arsenal.com/details/1/3400)
 
 ##License
 
