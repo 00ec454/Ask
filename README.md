@@ -20,35 +20,66 @@ The android basic code to request permission is to complex and tedious to unders
 
 ```groovy
 dependencies {
-	compile 'com.vistrav:ask:1.2'
+	compile 'com.vistrav:ask:2.0'
 }
 ```
 
 * Adding the necessary permissions into your project manifest file
 * Add the following code in your class to request the runtime permissions
 ```java
-        Ask.on(activity)
-                .forPermissions(Manifest.permission.ACCESS_COARSE_LOCATION
-                        , Manifest.permission.WRITE_EXTERNAL_STORAGE) //one or more permissions
-                .withRationales("Location permission need for map to work properly", 
-                        "In order to save file you will need to grant storage permission") //optional
-                .when(new Ask.Permission() {
-                    @Override
-                    public void granted(List<String> permissions) {
-                        Log.i(TAG, "granted :: " + permissions);
-                    }
+import android.Manifest;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
-                    @Override
-                    public void denied(List<String> permissions) {
-                        Log.i(TAG, "denied :: " + permissions);
-                    }
-                }).go();
+import com.vistrav.ask.Ask;
+import com.vistrav.ask.annotations.AskDenied;
+import com.vistrav.ask.annotations.AskGranted;
+
+@SuppressWarnings("unused")
+public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = MainActivity.class.getSimpleName();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Ask.on(this)
+                .forPermissions(Manifest.permission.ACCESS_COARSE_LOCATION
+                        , Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .withRationales("Location permission need for map to work properly",
+                        "In order to save file you will need to grant storage permission") //optional
+                .go();
+    }
+
+    //optional
+    @AskGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    public void fileAccessGranted() {
+        Log.i(TAG, "FILE  GRANTED");
+    }
+
+    //optional
+    @AskDenied(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    public void fileAccessDenied() {
+        Log.i(TAG, "FILE  DENiED");
+    }
+
+    //optional
+    @AskGranted(Manifest.permission.ACCESS_COARSE_LOCATION)
+    public void mapAccessGranted() {
+        Log.i(TAG, "MAP GRANTED");
+    }
+
+    //optional
+    @AskDenied(Manifest.permission.ACCESS_COARSE_LOCATION)
+    public void mapAccessDenied() {
+        Log.i(TAG, "MAP DENIED");
+    }
+}
 
 ```
 
-* Implement callback methods `granted` or `denied`
- * the `granted` method provides the list of granted permissions.
- * the `denied` method provides the list of denied permissions.
 * The setting rationale message is optional but it would be good in case user has declined the permission, there is chance for developer to explain app user why specific permission is needed
 
 1. `forPermissions` method takes one or more permissions as argument
