@@ -1,25 +1,23 @@
 package com.vistrav.example;
 
 import android.Manifest;
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import com.vistrav.ask.Ask;
 import com.vistrav.ask.annotations.AskDenied;
 import com.vistrav.ask.annotations.AskGranted;
 
 @SuppressWarnings("unused")
-public class MainActivity extends AppCompatActivity {
+public class AnotherActivity extends AppCompatActivity {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = AnotherActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_another);
         Ask.on(this)
                 .forPermissions(Manifest.permission.ACCESS_COARSE_LOCATION
                         , Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -50,9 +48,5 @@ public class MainActivity extends AppCompatActivity {
     @AskDenied(Manifest.permission.ACCESS_COARSE_LOCATION)
     public void mapAccessDenied() {
         Log.i(TAG, "MAP DENIED");
-    }
-
-    public void jumpToAnotherActivity(View view) {
-        startActivity(new Intent(this, AnotherActivity.class));
     }
 }

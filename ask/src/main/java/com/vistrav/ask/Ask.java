@@ -21,11 +21,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @SuppressWarnings("unused")
 public class Ask {
 
-    private Context context;
     private String[] permissions;
     private String[] rationalMessages;
     private Map<String, Boolean> permissionGrantResults = new HashMap<>();
@@ -33,23 +33,32 @@ public class Ask {
     private static Permission permissionObj;
     private static Fragment fragment;
     private static Activity activity;
-    private static int id = Constants.DEFAULT_ID;
+    private static int id;
     private static Map<String, Method> permissionMethodMap;
     private static boolean warn = true;
 
-    private Ask(Context context) {
-        this.context = context;
+    private Ask() {
         permissionMethodMap = new HashMap<>();
+        id = 0;
+        permissionObj = null;
+        warn = true;
     }
 
     public static Ask on(Activity lActivity) {
+        if (lActivity == null) {
+            throw new IllegalArgumentException("Null Fragment Reference");
+        }
         activity = lActivity;
-        return new Ask(lActivity);
+        return new Ask();
     }
 
     public static Ask on(Fragment lFragment) {
+        if (lFragment == null) {
+            throw new IllegalArgumentException("Null Fragment Reference");
+        }
         fragment = lFragment;
-        return new Ask(lFragment.getActivity());
+        activity = fragment.getActivity();
+        return new Ask();
     }
 
     public Ask forPermissions(@NonNull @Size(min = 1) String... permissions) {
@@ -86,10 +95,16 @@ public class Ask {
                 invokeMethod(permission, true);
             }
         } else {
-            Intent intent = new Intent(context, AskActivity.class);
+            Intent intent = new Intent(activity, AskActivity.class);
             intent.putExtra(Constants.PERMISSIONS, permissions);
             intent.putExtra(Constants.RATIONAL_MESSAGES, rationalMessages);
-            context.startActivity(intent);
+            if (id == 0) {
+                Random random = new Random();
+                id = random.nextInt();
+                Log.i(TAG, "ID======="+id);
+                intent.putExtra(Constants.REQUEST_ID, id);
+            }
+            activity.startActivity(intent);
         }
     }
 
@@ -107,6 +122,12 @@ public class Ask {
     public static class Receiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context lContext, Intent intent) {
+            Log.d(TAG, "id --  :: " + id);
+            int requestId = intent.getIntExtra(Constants.REQUEST_ID, 0);
+            Log.d(TAG, "requestId :: " + requestId);
+            if (id != requestId) {
+                return;
+            }
             String[] permissions = intent.getStringArrayExtra(Constants.PERMISSIONS);
             int[] grantResults = intent.getIntArrayExtra(Constants.GRANT_RESULTS);
             Map<String, Boolean> permissionGrantResults = new HashMap<>();

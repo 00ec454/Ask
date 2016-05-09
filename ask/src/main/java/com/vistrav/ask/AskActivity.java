@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -27,6 +28,7 @@ public class AskActivity extends AppCompatActivity {
     private static final String TAG = AskActivity.class.getSimpleName();
     private String[] permissions;
     private String[] rationaleMessages;
+    private int requestId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,17 +42,20 @@ public class AskActivity extends AppCompatActivity {
         if (state != null) {
             permissions = state.getStringArray(Constants.PERMISSIONS);
             rationaleMessages = state.getStringArray(Constants.RATIONAL_MESSAGES);
+            requestId = state.getInt(Constants.REQUEST_ID);
         } else {
             Intent intent = getIntent();
             permissions = intent.getStringArrayExtra(Constants.PERMISSIONS);
-            rationaleMessages = intent.getStringArrayExtra(Constants.RATIONAL_MESSAGES);
+            requestId = intent.getExtras().getInt(Constants.REQUEST_ID, 0);
         }
+        Log.i(TAG, "requestId=====> "+requestId);
     }
 
     @Override
     public void onSaveInstanceState(Bundle state) {
         state.putStringArray(Constants.PERMISSIONS, permissions);
         state.putStringArray(Constants.RATIONAL_MESSAGES, rationaleMessages);
+        state.putInt(Constants.REQUEST_ID, requestId);
     }
 
     private void getPermissions() {
@@ -138,8 +143,10 @@ public class AskActivity extends AppCompatActivity {
         if (grantResults.length > 0) {
             Intent intent = new Intent();
             intent.setAction("com.vistrav.ask.PERMISSION_RESULT_INTENT");
+            //intent.addCategory()
             intent.putExtra(Constants.PERMISSIONS, permissions);
             intent.putExtra(Constants.GRANT_RESULTS, grantResults);
+            intent.putExtra(Constants.REQUEST_ID, requestId);
             sendBroadcast(intent);
         }
     }
