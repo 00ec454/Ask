@@ -18,34 +18,34 @@ public class AnotherActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_another);
-        Ask.on(this)
+        Ask.on(this).debug(true)
                 .forPermissions(Manifest.permission.ACCESS_COARSE_LOCATION
-                        , Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        , Manifest.permission.WRITE_EXTERNAL_STORAGE).id(22222)
                 .withRationales("Location permission need for map to work properly",
                         "In order to save file you will need to grant storage permission") //optional
                 .go();
     }
 
     //optional
-    @AskGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    @AskGranted(value=Manifest.permission.WRITE_EXTERNAL_STORAGE,id=22222)
     public void fileAccessGranted() {
         Log.i(TAG, "FILE  GRANTED");
     }
 
     //optional
-    @AskDenied(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    @AskDenied(value=Manifest.permission.WRITE_EXTERNAL_STORAGE,id=22222)
     public void fileAccessDenied() {
         Log.i(TAG, "FILE  DENiED");
     }
 
     //optional
-    @AskGranted(Manifest.permission.ACCESS_COARSE_LOCATION)
+    @AskGranted(value=Manifest.permission.ACCESS_COARSE_LOCATION,id=22222)
     public void mapAccessGranted() {
         Log.i(TAG, "MAP GRANTED");
     }
 
     //optional
-    @AskDenied(Manifest.permission.ACCESS_COARSE_LOCATION)
+    @AskDenied(value=Manifest.permission.ACCESS_COARSE_LOCATION,id=22222)
     public void mapAccessDenied() {
         Log.i(TAG, "MAP DENIED");
     }

@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -48,7 +47,6 @@ public class AskActivity extends AppCompatActivity {
             permissions = intent.getStringArrayExtra(Constants.PERMISSIONS);
             requestId = intent.getExtras().getInt(Constants.REQUEST_ID, 0);
         }
-        Log.i(TAG, "requestId=====> "+requestId);
     }
 
     @Override
@@ -143,7 +141,6 @@ public class AskActivity extends AppCompatActivity {
         if (grantResults.length > 0) {
             Intent intent = new Intent();
             intent.setAction("com.vistrav.ask.PERMISSION_RESULT_INTENT");
-            //intent.addCategory()
             intent.putExtra(Constants.PERMISSIONS, permissions);
             intent.putExtra(Constants.GRANT_RESULTS, grantResults);
             intent.putExtra(Constants.REQUEST_ID, requestId);
