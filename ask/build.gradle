@@ -31,7 +31,7 @@ ext {
     siteUrl = 'https://github.com/00ec454/Ask'
     gitUrl = 'https://github.com/00ec454/Ask.git'
 
-    libraryVersion = '2.0'
+    libraryVersion = '2.1'
 
     developerId = '00ec454'
     developerName = 'Dharmesh Gohil'
