@@ -26,6 +26,8 @@ import java.util.Random;
 @SuppressWarnings("unused")
 public class Ask {
 
+    private String[] permissions;
+    private String[] rationalMessages;
     private static final String TAG = Ask.class.getSimpleName();
     private static Permission permissionObj;
     private static Fragment fragment;
@@ -33,8 +35,7 @@ public class Ask {
     private static int id;
     private static Map<String, Method> permissionMethodMap;
     private static boolean debug = false;
-    private String[] permissions;
-    private String[] rationalMessages;
+
 
     private Ask() {
         permissionMethodMap = new HashMap<>();
@@ -59,26 +60,6 @@ public class Ask {
         fragment = lFragment;
         activity = lFragment.getActivity();
         return new Ask();
-    }
-
-    private static void getAnnotatedMethod() {
-        permissionMethodMap.clear();
-        Method[] methods = fragment != null ? fragment.getClass().getMethods() : activity.getClass().getMethods();
-        for (Method method : methods) {
-            AskDenied askDenied = method.getAnnotation(AskDenied.class);
-            AskGranted askGranted = method.getAnnotation(AskGranted.class);
-            if (askDenied != null) {
-                int lId = askDenied.id() != -1 ? askDenied.id() : id;
-                permissionMethodMap.put(false + "_" + askDenied.value() + "_" + id, method);
-            }
-            if (askGranted != null) {
-                int lId = askGranted.id() != -1 ? askGranted.id() : id;
-                permissionMethodMap.put(true + "_" + askGranted.value() + "_" + id, method);
-            }
-        }
-        if (debug) {
-            Log.d(TAG, "annotated methods map :: " + permissionMethodMap);
-        }
     }
 
     private static void invokeMethod(String permission, boolean isGranted) {
@@ -191,6 +172,26 @@ public class Ask {
                 if(deniedPermissions.size()==0)
                     permissionObj.onAllPermissionsGranted(true);
             }
+        }
+    }
+
+    private static void getAnnotatedMethod() {
+        permissionMethodMap.clear();
+        Method[] methods = fragment != null ? fragment.getClass().getMethods() : activity.getClass().getMethods();
+        for (Method method : methods) {
+            AskDenied askDenied = method.getAnnotation(AskDenied.class);
+            AskGranted askGranted = method.getAnnotation(AskGranted.class);
+            if (askDenied != null) {
+                int lId = askDenied.id() != -1 ? askDenied.id() : id;
+                permissionMethodMap.put(false + "_" + askDenied.value() + "_" + id, method);
+            }
+            if (askGranted != null) {
+                int lId = askGranted.id() != -1 ? askGranted.id() : id;
+                permissionMethodMap.put(true + "_" + askGranted.value() + "_" + id, method);
+            }
+        }
+        if (debug) {
+            Log.d(TAG, "annotated methods map :: " + permissionMethodMap);
         }
     }
 }
