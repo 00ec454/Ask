@@ -26,9 +26,6 @@ import java.util.Random;
 @SuppressWarnings("unused")
 public class Ask {
 
-    private String[] permissions;
-    private String[] rationalMessages;
-    private Map<String, Boolean> permissionGrantResults = new HashMap<>();
     private static final String TAG = Ask.class.getSimpleName();
     private static Permission permissionObj;
     private static Fragment fragment;
@@ -36,6 +33,8 @@ public class Ask {
     private static int id;
     private static Map<String, Method> permissionMethodMap;
     private static boolean debug = false;
+    private String[] permissions;
+    private String[] rationalMessages;
 
     private Ask() {
         permissionMethodMap = new HashMap<>();
@@ -60,6 +59,44 @@ public class Ask {
         fragment = lFragment;
         activity = lFragment.getActivity();
         return new Ask();
+    }
+
+    private static void getAnnotatedMethod() {
+        permissionMethodMap.clear();
+        Method[] methods = fragment != null ? fragment.getClass().getMethods() : activity.getClass().getMethods();
+        for (Method method : methods) {
+            AskDenied askDenied = method.getAnnotation(AskDenied.class);
+            AskGranted askGranted = method.getAnnotation(AskGranted.class);
+            if (askDenied != null) {
+                int lId = askDenied.id() != -1 ? askDenied.id() : id;
+                permissionMethodMap.put(false + "_" + askDenied.value() + "_" + id, method);
+            }
+            if (askGranted != null) {
+                int lId = askGranted.id() != -1 ? askGranted.id() : id;
+                permissionMethodMap.put(true + "_" + askGranted.value() + "_" + id, method);
+            }
+        }
+        if (debug) {
+            Log.d(TAG, "annotated methods map :: " + permissionMethodMap);
+        }
+    }
+
+    private static void invokeMethod(String permission, boolean isGranted) {
+        String key = isGranted + "_" + permission + "_" + id;
+        String val = isGranted ? "Granted" : "Denied";
+        try {
+            if (debug) {
+                Log.d(TAG, "invoke method for key :: " + key);
+            }
+            if (permissionMethodMap.containsKey(key)) {
+                permissionMethodMap.get(key).invoke(fragment != null ? fragment : activity);
+            } else if (debug) {
+                Log.w(TAG, "No method found to handle the " + permission + " " + val + " case. Please check for the detail here https://github.com/00ec454/Ask");
+            }
+        } catch (Exception e) {
+            if (debug)
+                Log.e(TAG, e.getMessage(), e);
+        }
     }
 
     public Ask forPermissions(@NonNull @Size(min = 1) String... permissions) {
@@ -119,6 +156,8 @@ public class Ask {
         void granted(List<String> permissions);
 
         void denied(List<String> permissions);
+
+        void onAllPermissionsGranted(boolean allGranted);
     }
 
     public static class Receiver extends BroadcastReceiver {
@@ -135,7 +174,6 @@ public class Ask {
             }
             String[] permissions = intent.getStringArrayExtra(Constants.PERMISSIONS);
             int[] grantResults = intent.getIntArrayExtra(Constants.GRANT_RESULTS);
-            Map<String, Boolean> permissionGrantResults = new HashMap<>();
             List<String> grantedPermissions = new ArrayList<>();
             List<String> deniedPermissions = new ArrayList<>();
             for (int i = 0; i < permissions.length; i++) {
@@ -150,45 +188,9 @@ public class Ask {
             if (permissionObj != null) {
                 permissionObj.denied(deniedPermissions);
                 permissionObj.granted(grantedPermissions);
+                if(deniedPermissions.size()==0)
+                    permissionObj.onAllPermissionsGranted(true);
             }
-        }
-    }
-
-    private static void getAnnotatedMethod() {
-        permissionMethodMap.clear();
-        Method[] methods = fragment != null ? fragment.getClass().getMethods() : activity.getClass().getMethods();
-        for (Method method : methods) {
-            AskDenied askDenied = method.getAnnotation(AskDenied.class);
-            AskGranted askGranted = method.getAnnotation(AskGranted.class);
-            if (askDenied != null) {
-                int lId = askDenied.id() != -1 ? askDenied.id() : id;
-                permissionMethodMap.put(false + "_" + askDenied.value() + "_" + id, method);
-            }
-            if (askGranted != null) {
-                int lId = askGranted.id() != -1 ? askGranted.id() : id;
-                permissionMethodMap.put(true + "_" + askGranted.value() + "_" + id, method);
-            }
-        }
-        if (debug) {
-            Log.d(TAG, "annotated methods map :: " + permissionMethodMap);
-        }
-    }
-
-    private static void invokeMethod(String permission, boolean isGranted) {
-        String key = isGranted + "_" + permission + "_" + id;
-        String val = isGranted ? "Granted" : "Denied";
-        try {
-            if (debug) {
-                Log.d(TAG, "invoke method for key :: " + key);
-            }
-            if (permissionMethodMap.containsKey(key)) {
-                permissionMethodMap.get(key).invoke(fragment != null ? fragment : activity);
-            } else if (debug) {
-                Log.w(TAG, "No method found to handle the " + permission + " " + val + " case. Please check for the detail here https://github.com/00ec454/Ask");
-            }
-        } catch (Exception e) {
-            if (debug)
-                Log.e(TAG, e.getMessage(), e);
         }
     }
 }
