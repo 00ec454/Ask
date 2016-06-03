@@ -62,24 +62,6 @@ public class Ask {
         return new Ask();
     }
 
-    private static void invokeMethod(String permission, boolean isGranted) {
-        String key = isGranted + "_" + permission + "_" + id;
-        String val = isGranted ? "Granted" : "Denied";
-        try {
-            if (debug) {
-                Log.d(TAG, "invoke method for key :: " + key);
-            }
-            if (permissionMethodMap.containsKey(key)) {
-                permissionMethodMap.get(key).invoke(fragment != null ? fragment : activity);
-            } else if (debug) {
-                Log.w(TAG, "No method found to handle the " + permission + " " + val + " case. Please check for the detail here https://github.com/00ec454/Ask");
-            }
-        } catch (Exception e) {
-            if (debug)
-                Log.e(TAG, e.getMessage(), e);
-        }
-    }
-
     public Ask forPermissions(@NonNull @Size(min = 1) String... permissions) {
         if (permissions == null || permissions.length == 0) {
             throw new IllegalArgumentException("The permissions to request are missing");
@@ -192,6 +174,24 @@ public class Ask {
         }
         if (debug) {
             Log.d(TAG, "annotated methods map :: " + permissionMethodMap);
+        }
+    }
+
+    private static void invokeMethod(String permission, boolean isGranted) {
+        String key = isGranted + "_" + permission + "_" + id;
+        String val = isGranted ? "Granted" : "Denied";
+        try {
+            if (debug) {
+                Log.d(TAG, "invoke method for key :: " + key);
+            }
+            if (permissionMethodMap.containsKey(key)) {
+                permissionMethodMap.get(key).invoke(fragment != null ? fragment : activity);
+            } else if (debug) {
+                Log.w(TAG, "No method found to handle the " + permission + " " + val + " case. Please check for the detail here https://github.com/00ec454/Ask");
+            }
+        } catch (Exception e) {
+            if (debug)
+                Log.e(TAG, e.getMessage(), e);
         }
     }
 }
