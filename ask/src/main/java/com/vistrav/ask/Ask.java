@@ -120,7 +120,7 @@ public class Ask {
 
         void denied(List<String> permissions);
 
-        void onAllPermissionsGranted(boolean allGranted);
+        void grantedAll();
     }
 
     public static class Receiver extends BroadcastReceiver {
@@ -152,7 +152,7 @@ public class Ask {
                 permissionObj.denied(deniedPermissions);
                 permissionObj.granted(grantedPermissions);
                 if(deniedPermissions.size()==0)
-                    permissionObj.onAllPermissionsGranted(true);
+                    permissionObj.grantedAll();
             }
         }
     }
