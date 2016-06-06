@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.vistrav.ask.annotations.AskDenied;
 import com.vistrav.ask.annotations.AskGranted;
+import com.vistrav.ask.annotations.AskGrantedAll;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -28,14 +29,15 @@ public class Ask {
 
     private String[] permissions;
     private String[] rationalMessages;
-    private Map<String, Boolean> permissionGrantResults = new HashMap<>();
     private static final String TAG = Ask.class.getSimpleName();
+    private static final String ALL_PERMISSIONS="All";
     private static Permission permissionObj;
     private static Fragment fragment;
     private static Activity activity;
     private static int id;
     private static Map<String, Method> permissionMethodMap;
     private static boolean debug = false;
+
 
     private Ask() {
         permissionMethodMap = new HashMap<>();
@@ -119,12 +121,15 @@ public class Ask {
         void granted(List<String> permissions);
 
         void denied(List<String> permissions);
+
+        void grantedAll();
     }
 
     public static class Receiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context lContext, Intent intent) {
+            boolean grantedAll=true;
             int requestId = intent.getIntExtra(Constants.REQUEST_ID, 0);
             if (debug) {
                 Log.d(TAG, "request id :: " + id + ",  received request id :: " + requestId);
@@ -135,7 +140,6 @@ public class Ask {
             }
             String[] permissions = intent.getStringArrayExtra(Constants.PERMISSIONS);
             int[] grantResults = intent.getIntArrayExtra(Constants.GRANT_RESULTS);
-            Map<String, Boolean> permissionGrantResults = new HashMap<>();
             List<String> grantedPermissions = new ArrayList<>();
             List<String> deniedPermissions = new ArrayList<>();
             for (int i = 0; i < permissions.length; i++) {
@@ -145,21 +149,30 @@ public class Ask {
                     grantedPermissions.add(permissions[i]);
                 } else {
                     deniedPermissions.add(permissions[i]);
+                    grantedAll=false;
                 }
+            }
+            //if all permissions are granted
+            if(grantedAll){
+                invokeMethod(ALL_PERMISSIONS,true);
             }
             if (permissionObj != null) {
                 permissionObj.denied(deniedPermissions);
                 permissionObj.granted(grantedPermissions);
+                if(deniedPermissions.size()==0)
+                    permissionObj.grantedAll();
             }
         }
     }
 
     private static void getAnnotatedMethod() {
+
         permissionMethodMap.clear();
         Method[] methods = fragment != null ? fragment.getClass().getMethods() : activity.getClass().getMethods();
         for (Method method : methods) {
             AskDenied askDenied = method.getAnnotation(AskDenied.class);
             AskGranted askGranted = method.getAnnotation(AskGranted.class);
+            AskGrantedAll askGrantedAll=method.getAnnotation(AskGrantedAll.class);
             if (askDenied != null) {
                 int lId = askDenied.id() != -1 ? askDenied.id() : id;
                 permissionMethodMap.put(false + "_" + askDenied.value() + "_" + id, method);
@@ -167,6 +180,10 @@ public class Ask {
             if (askGranted != null) {
                 int lId = askGranted.id() != -1 ? askGranted.id() : id;
                 permissionMethodMap.put(true + "_" + askGranted.value() + "_" + id, method);
+            }
+            if(askGrantedAll!=null){
+                int lId = askGrantedAll.id() != -1 ? askGrantedAll.id() : id;
+                permissionMethodMap.put(true + "_" + askGrantedAll.value() + "_" + id, method);
             }
         }
         if (debug) {

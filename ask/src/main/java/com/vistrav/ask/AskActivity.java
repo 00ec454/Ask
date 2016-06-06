@@ -25,6 +25,9 @@ public class AskActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST = 100;
     @SuppressWarnings("unused")
     private static final String TAG = AskActivity.class.getSimpleName();
+    private static final String NEEDED_PERMISSIONS = "needed_permissions";
+    private static final String SHOW_RATIONAL_FOR = "show_rational_for";
+    private static final String RATIONALE_MESSAGES_TO_SHOW = "rational_messages";
     private String[] permissions;
     private String[] rationaleMessages;
     private int requestId;
@@ -84,10 +87,6 @@ public class AskActivity extends AppCompatActivity {
             finish();
         }
     }
-
-    private static final String NEEDED_PERMISSIONS = "needed_permissions";
-    private static final String SHOW_RATIONAL_FOR = "show_rational_for";
-    private static final String RATIONALE_MESSAGES_TO_SHOW = "rational_messages";
 
     private Map<String, List<String>> separatePermissions(String[] permissions, String[] rationalMessages) {
         Map<String, List<String>> map = new HashMap<>();
