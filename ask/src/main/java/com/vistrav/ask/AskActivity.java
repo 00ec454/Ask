@@ -48,6 +48,7 @@ public class AskActivity extends AppCompatActivity {
         } else {
             Intent intent = getIntent();
             permissions = intent.getStringArrayExtra(Constants.PERMISSIONS);
+            rationaleMessages = intent.getStringArrayExtra(Constants.RATIONAL_MESSAGES); // To show rational messages.
             requestId = intent.getExtras().getInt(Constants.REQUEST_ID, 0);
         }
     }
