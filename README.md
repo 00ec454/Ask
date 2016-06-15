@@ -1,7 +1,7 @@
 # Ask
 Android runtime permissions make easy
 
-[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Ask-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/3465) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/00ec454/ask/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Ask-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/3465)
 # Why?
 
 In marshmallow, android has introduced runtime permission check, that means when application runs, it asks user provide permission to run specific functionality. for example if you using Camera or saving files on external storage or location.
@@ -20,7 +20,7 @@ The android basic code to request permission is to complex and tedious to unders
 
 ```groovy
 dependencies {
-	compile 'com.vistrav:ask:2.1'
+	compile 'com.vistrav:ask:2.2'
 }
 ```
 
