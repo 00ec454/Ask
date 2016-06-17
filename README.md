@@ -20,7 +20,7 @@ The android basic code to request permission is to complex and tedious to unders
 
 ```groovy
 dependencies {
-	compile 'com.vistrav:ask:2.2'
+	compile 'com.vistrav:ask:2.3'
 }
 ```
 

@@ -103,12 +103,14 @@ public class AskActivity extends AppCompatActivity {
                 showRationalsFor.add(permission);
                 // if multiple rational message corresponding to each permission
                 if (rationalMessages != null && rationalMessages.length == permissions.length) {
-                    neededRationalMessages.add(rationalMessages[i]);
+                    if(!neededRationalMessages.contains(rationalMessages[i])) {
+                        neededRationalMessages.add(rationalMessages[i]);
+                    }
                 }
             }
         }
         // if rational message is only one
-        if (rationalMessages != null && rationalMessages.length == 1) {
+        if (rationalMessages != null && rationalMessages.length == 1 && !neededRationalMessages.contains(rationalMessages[0])) {
             neededRationalMessages.add(rationalMessages[0]);
         }
         map.put(NEEDED_PERMISSIONS, neededPermissions);
