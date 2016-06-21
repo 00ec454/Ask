@@ -175,15 +175,15 @@ public class Ask {
             AskGrantedAll askGrantedAll=method.getAnnotation(AskGrantedAll.class);
             if (askDenied != null) {
                 int lId = askDenied.id() != -1 ? askDenied.id() : id;
-                permissionMethodMap.put(false + "_" + askDenied.value() + "_" + id, method);
+                permissionMethodMap.put(false + "_" + askDenied.value() + "_" + lId, method);
             }
             if (askGranted != null) {
                 int lId = askGranted.id() != -1 ? askGranted.id() : id;
-                permissionMethodMap.put(true + "_" + askGranted.value() + "_" + id, method);
+                permissionMethodMap.put(true + "_" + askGranted.value() + "_" + lId, method);
             }
             if(askGrantedAll!=null){
                 int lId = askGrantedAll.id() != -1 ? askGrantedAll.id() : id;
-                permissionMethodMap.put(true + "_" + askGrantedAll.value() + "_" + id, method);
+                permissionMethodMap.put(true + "_" + askGrantedAll.value() + "_" + lId, method);
             }
         }
         if (debug) {
