@@ -95,7 +95,9 @@ In case you think you have some improvement, please feel free do pull request yo
 [![Github](https://img.shields.io/badge/github-pop-green.svg)](https://github.com/00ec454/pop) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Pop-green.svg?style=true)](https://android-arsenal.com/details/1/3400)
 
 ##License
-
+    
+    Copyright (C) 2016 Dharmesh Gohil
+    
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
