@@ -103,6 +103,7 @@ public class Ask {
             for (String permission : permissions) {
                 invokeMethod(permission, true);
             }
+            invokeMethod( "All",true );
         } else {
             Intent intent = new Intent(activity, AskActivity.class);
             intent.putExtra(Constants.PERMISSIONS, permissions);
