@@ -87,14 +87,14 @@ public class MainActivity extends AppCompatActivity {
 
 **IMPORTANT: If your application is running in any android verion lesser than Marshamallow, the all, requested permissions will be granted by default and you can find then in list provided by `granted` method**
 
-##You can contribute!
+## You can contribute!
 In case you think you have some improvement, please feel free do pull request your feature and I would be happy to include it. Let's make this Ask very easy to use and rich with features.
 
-##Other Userful Libraries
+## Other Userful Libraries
 #### pop - a quick android dialog building lib
 [![Github](https://img.shields.io/badge/github-pop-green.svg)](https://github.com/00ec454/pop) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Pop-green.svg?style=true)](https://android-arsenal.com/details/1/3400)
 
-##License
+## License
     
     Copyright (C) 2016 Dharmesh Gohil
     
