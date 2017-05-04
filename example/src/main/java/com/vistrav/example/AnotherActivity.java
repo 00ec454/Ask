@@ -27,25 +27,25 @@ public class AnotherActivity extends AppCompatActivity {
     }
 
     //optional
-    @AskGranted(value=Manifest.permission.WRITE_EXTERNAL_STORAGE,id=22222)
+    @AskGranted(value=Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public void fileAccessGranted() {
         Log.i(TAG, "FILE  GRANTED");
     }
 
     //optional
-    @AskDenied(value=Manifest.permission.WRITE_EXTERNAL_STORAGE,id=22222)
+    @AskDenied(value=Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public void fileAccessDenied() {
         Log.i(TAG, "FILE  DENiED");
     }
 
     //optional
-    @AskGranted(value=Manifest.permission.ACCESS_COARSE_LOCATION,id=22222)
-    public void mapAccessGranted() {
-        Log.i(TAG, "MAP GRANTED");
+    @AskGranted(value=Manifest.permission.ACCESS_COARSE_LOCATION)
+    public void mapAccessGranted(int id) {
+        Log.i(TAG, "MAP GRANTED====>"+id);
     }
 
     //optional
-    @AskDenied(value=Manifest.permission.ACCESS_COARSE_LOCATION,id=22222)
+    @AskDenied(value=Manifest.permission.ACCESS_COARSE_LOCATION)
     public void mapAccessDenied() {
         Log.i(TAG, "MAP DENIED");
     }

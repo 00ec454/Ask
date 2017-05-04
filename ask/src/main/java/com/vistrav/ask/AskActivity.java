@@ -76,9 +76,9 @@ public class AskActivity extends AppCompatActivity {
                         public void clicked(DialogInterface dialog, @Nullable View view) {
                             ActivityCompat.requestPermissions(AskActivity.this, showRationaleFor.toArray(new String[showRationaleFor.size()]), PERMISSION_REQUEST);
                             dialog.dismiss();
+
                         }
-                    })
-                    .show();
+                    }).show();
         } else if (neededPermissions.size() > 0) {
             ActivityCompat.requestPermissions(this, neededPermissions.toArray(new String[showRationaleFor.size()]), PERMISSION_REQUEST);
         } else {
@@ -103,7 +103,7 @@ public class AskActivity extends AppCompatActivity {
                 showRationalsFor.add(permission);
                 // if multiple rational message corresponding to each permission
                 if (rationalMessages != null && rationalMessages.length == permissions.length) {
-                    if(!neededRationalMessages.contains(rationalMessages[i])) {
+                    if (!neededRationalMessages.contains(rationalMessages[i])) {
                         neededRationalMessages.add(rationalMessages[i]);
                     }
                 }

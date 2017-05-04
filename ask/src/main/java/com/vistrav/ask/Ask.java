@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.Size;
@@ -16,6 +17,7 @@ import com.vistrav.ask.annotations.AskDenied;
 import com.vistrav.ask.annotations.AskGranted;
 import com.vistrav.ask.annotations.AskGrantedAll;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,37 +32,36 @@ public class Ask {
     private String[] permissions;
     private String[] rationalMessages;
     private static final String TAG = Ask.class.getSimpleName();
-    private static final String ALL_PERMISSIONS="All";
-    private static Permission permissionObj;
-    private static Fragment fragment;
-    private static Activity activity;
+    private static final String ALL_PERMISSIONS = "All";
+    private static WeakReference<Permission> permissionObjRef;
+    private static WeakReference<Fragment> fragmentRef;
+    private static WeakReference<Activity> activityRef;
+    private static WeakReference<Map<String, Method>> permissionMethodMapRef;
     private static int id;
-    private static Map<String, Method> permissionMethodMap;
     private static boolean debug = false;
 
 
     private Ask() {
-        permissionMethodMap = new HashMap<>();
+        permissionMethodMapRef = new WeakReference<Map<String, Method>>(new HashMap<String, Method>());
         debug = false;
-        permissionObj = null;
+        permissionObjRef = null;
         Random rand = new Random();
         id = rand.nextInt();
     }
 
     public static Ask on(Activity lActivity) {
         if (lActivity == null) {
-            throw new IllegalArgumentException("Null Fragment Reference");
+            throw new IllegalArgumentException("Null Reference");
         }
-        activity = lActivity;
+        activityRef = new WeakReference<>(lActivity);
         return new Ask();
     }
 
     public static Ask on(Fragment lFragment) {
         if (lFragment == null) {
-            throw new IllegalArgumentException("Null Fragment Reference");
+            throw new IllegalArgumentException("Null Reference");
         }
-        fragment = lFragment;
-        activity = lFragment.getActivity();
+        fragmentRef = new WeakReference<>(lFragment);
         return new Ask();
     }
 
@@ -69,6 +70,18 @@ public class Ask {
             throw new IllegalArgumentException("The permissions to request are missing");
         }
         this.permissions = permissions;
+        return this;
+    }
+
+    public Ask withRationales(@IntegerRes int... rationalMessages) {
+        if (rationalMessages.length == 0) {
+            throw new IllegalArgumentException("The Rationale Messages are missing");
+        }
+        String msges[] = new String[rationalMessages.length];
+        for (int i = 0; i < rationalMessages.length; i++) {
+            msges[i] = getActivity().getString(rationalMessages[i]);
+        }
+        this.rationalMessages = msges;
         return this;
     }
 
@@ -90,35 +103,39 @@ public class Ask {
         return this;
     }
 
+    private Activity getActivity() {
+        return fragmentRef != null ? fragmentRef.get().getActivity() : activityRef.get();
+    }
+
     public void go() {
         if (debug) {
             Log.d(TAG, "request id :: " + id);
         }
         getAnnotatedMethod();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            if (permissionObj != null) {
-                permissionObj.granted(Arrays.asList(permissions));
-                permissionObj.denied(new ArrayList<String>());
+            if (permissionObjRef != null && permissionObjRef.get() != null) {
+                permissionObjRef.get().granted(Arrays.asList(permissions));
+                permissionObjRef.get().denied(new ArrayList<String>());
             }
             for (String permission : permissions) {
                 invokeMethod(permission, true);
             }
-            invokeMethod( "All",true );
+            invokeMethod("All", true);
         } else {
-            Intent intent = new Intent(activity, AskActivity.class);
+            Intent intent = new Intent(getActivity(), AskActivity.class);
             intent.putExtra(Constants.PERMISSIONS, permissions);
             intent.putExtra(Constants.RATIONAL_MESSAGES, rationalMessages);
             intent.putExtra(Constants.REQUEST_ID, id);
-            activity.startActivity(intent);
+            getActivity().startActivity(intent);
         }
     }
 
     public Ask when(@Nullable Permission permission) {
-        permissionObj = permission;
+        permissionObjRef = new WeakReference<>(permission);
         return this;
     }
 
-    public interface Permission {
+    interface Permission {
         void granted(List<String> permissions);
 
         void denied(List<String> permissions);
@@ -130,7 +147,7 @@ public class Ask {
 
         @Override
         public void onReceive(Context lContext, Intent intent) {
-            boolean grantedAll=true;
+            boolean grantedAll = true;
             int requestId = intent.getIntExtra(Constants.REQUEST_ID, 0);
             if (debug) {
                 Log.d(TAG, "request id :: " + id + ",  received request id :: " + requestId);
@@ -150,63 +167,77 @@ public class Ask {
                     grantedPermissions.add(permissions[i]);
                 } else {
                     deniedPermissions.add(permissions[i]);
-                    grantedAll=false;
+                    grantedAll = false;
                 }
             }
             //if all permissions are granted
-            if(grantedAll){
-                invokeMethod(ALL_PERMISSIONS,true);
+            if (grantedAll) {
+                invokeMethod(ALL_PERMISSIONS, true);
             }
-            if (permissionObj != null) {
-                permissionObj.denied(deniedPermissions);
-                permissionObj.granted(grantedPermissions);
-                if(deniedPermissions.size()==0)
-                    permissionObj.grantedAll();
+            if (permissionObjRef != null && permissionObjRef.get() != null) {
+                permissionObjRef.get().denied(deniedPermissions);
+                permissionObjRef.get().granted(grantedPermissions);
+                if (deniedPermissions.size() == 0)
+                    permissionObjRef.get().grantedAll();
             }
         }
     }
 
     private static void getAnnotatedMethod() {
 
-        permissionMethodMap.clear();
-        Method[] methods = fragment != null ? fragment.getClass().getMethods() : activity.getClass().getMethods();
+        permissionMethodMapRef.get().clear();
+        Method[] methods = fragmentRef != null ? fragmentRef.get().getClass().getMethods() : activityRef.get().getClass().getMethods();
         for (Method method : methods) {
             AskDenied askDenied = method.getAnnotation(AskDenied.class);
             AskGranted askGranted = method.getAnnotation(AskGranted.class);
-            AskGrantedAll askGrantedAll=method.getAnnotation(AskGrantedAll.class);
+            AskGrantedAll askGrantedAll = method.getAnnotation(AskGrantedAll.class);
             if (askDenied != null) {
                 int lId = askDenied.id() != -1 ? askDenied.id() : id;
-                permissionMethodMap.put(false + "_" + askDenied.value() + "_" + lId, method);
+                permissionMethodMapRef.get().put(false + "_" + askDenied.value(), method);
             }
             if (askGranted != null) {
                 int lId = askGranted.id() != -1 ? askGranted.id() : id;
-                permissionMethodMap.put(true + "_" + askGranted.value() + "_" + lId, method);
+                permissionMethodMapRef.get().put(true + "_" + askGranted.value(), method);
             }
-            if(askGrantedAll!=null){
+            if (askGrantedAll != null) {
                 int lId = askGrantedAll.id() != -1 ? askGrantedAll.id() : id;
-                permissionMethodMap.put(true + "_" + askGrantedAll.value() + "_" + lId, method);
+                permissionMethodMapRef.get().put(true + "_" + askGrantedAll.value(), method);
             }
         }
         if (debug) {
-            Log.d(TAG, "annotated methods map :: " + permissionMethodMap);
+            Log.d(TAG, "annotated methods map :: " + permissionMethodMapRef.get());
         }
     }
 
     private static void invokeMethod(String permission, boolean isGranted) {
-        String key = isGranted + "_" + permission + "_" + id;
+        String key = isGranted + "_" + permission;
         String val = isGranted ? "Granted" : "Denied";
         try {
             if (debug) {
                 Log.d(TAG, "invoke method for key :: " + key);
             }
-            if (permissionMethodMap.containsKey(key)) {
-                permissionMethodMap.get(key).invoke(fragment != null ? fragment : activity);
+            if (permissionMethodMapRef.get().containsKey(key)) {
+                try {
+                    permissionMethodMapRef.get().get(key).invoke(fragmentRef != null ? fragmentRef.get() : activityRef.get(), id);
+                } catch (IllegalArgumentException ex) {
+                    permissionMethodMapRef.get().get(key).invoke(fragmentRef != null ? fragmentRef.get() : activityRef.get());
+                }
             } else if (debug) {
                 Log.w(TAG, "No method found to handle the " + permission + " " + val + " case. Please check for the detail here https://github.com/00ec454/Ask");
             }
         } catch (Exception e) {
             if (debug)
                 Log.e(TAG, e.getMessage(), e);
+        } finally {
+            //clear(fragmentRef, activityRef, permissionMethodMapRef, permissionObjRef);
+        }
+    }
+
+    private static void clear(WeakReference<? extends Object>... refs) {
+        for (WeakReference<? extends Object> ref : refs) {
+            if (ref != null) {
+                ref.clear();
+            }
         }
     }
 }
