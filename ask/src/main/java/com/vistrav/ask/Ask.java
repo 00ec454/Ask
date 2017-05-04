@@ -51,7 +51,7 @@ public class Ask {
 
     public static Ask on(Activity lActivity) {
         if (lActivity == null) {
-            throw new IllegalArgumentException("Null Fragment Reference");
+            throw new IllegalArgumentException("Null Reference");
         }
         activityRef = new WeakReference<>(lActivity);
         return new Ask();
@@ -59,7 +59,7 @@ public class Ask {
 
     public static Ask on(Fragment lFragment) {
         if (lFragment == null) {
-            throw new IllegalArgumentException("Null Fragment Reference");
+            throw new IllegalArgumentException("Null Reference");
         }
         fragmentRef = new WeakReference<>(lFragment);
         return new Ask();
@@ -85,6 +85,13 @@ public class Ask {
         return this;
     }
 
+    public Ask withRationales(@NonNull String... rationalMessages) {
+        if (rationalMessages == null || rationalMessages.length == 0) {
+            throw new IllegalArgumentException("The Rationale Messages are missing");
+        }
+        this.rationalMessages = rationalMessages;
+        return this;
+    }
 
     public Ask debug(boolean lDebug) {
         debug = lDebug;
@@ -186,15 +193,15 @@ public class Ask {
             AskGrantedAll askGrantedAll = method.getAnnotation(AskGrantedAll.class);
             if (askDenied != null) {
                 int lId = askDenied.id() != -1 ? askDenied.id() : id;
-                permissionMethodMapRef.get().put(false + "_" + askDenied.value() + "_" + lId, method);
+                permissionMethodMapRef.get().put(false + "_" + askDenied.value(), method);
             }
             if (askGranted != null) {
                 int lId = askGranted.id() != -1 ? askGranted.id() : id;
-                permissionMethodMapRef.get().put(true + "_" + askGranted.value() + "_" + lId, method);
+                permissionMethodMapRef.get().put(true + "_" + askGranted.value(), method);
             }
             if (askGrantedAll != null) {
                 int lId = askGrantedAll.id() != -1 ? askGrantedAll.id() : id;
-                permissionMethodMapRef.get().put(true + "_" + askGrantedAll.value() + "_" + lId, method);
+                permissionMethodMapRef.get().put(true + "_" + askGrantedAll.value(), method);
             }
         }
         if (debug) {
@@ -203,14 +210,18 @@ public class Ask {
     }
 
     private static void invokeMethod(String permission, boolean isGranted) {
-        String key = isGranted + "_" + permission + "_" + id;
+        String key = isGranted + "_" + permission;
         String val = isGranted ? "Granted" : "Denied";
         try {
             if (debug) {
                 Log.d(TAG, "invoke method for key :: " + key);
             }
             if (permissionMethodMapRef.get().containsKey(key)) {
-                permissionMethodMapRef.get().get(key).invoke(fragmentRef != null ? fragmentRef.get() : activityRef.get(), id);
+                try {
+                    permissionMethodMapRef.get().get(key).invoke(fragmentRef != null ? fragmentRef.get() : activityRef.get(), id);
+                } catch (IllegalArgumentException ex) {
+                    permissionMethodMapRef.get().get(key).invoke(fragmentRef != null ? fragmentRef.get() : activityRef.get());
+                }
             } else if (debug) {
                 Log.w(TAG, "No method found to handle the " + permission + " " + val + " case. Please check for the detail here https://github.com/00ec454/Ask");
             }
@@ -218,7 +229,7 @@ public class Ask {
             if (debug)
                 Log.e(TAG, e.getMessage(), e);
         } finally {
-            clear(fragmentRef, activityRef, permissionMethodMapRef, permissionObjRef);
+            //clear(fragmentRef, activityRef, permissionMethodMapRef, permissionObjRef);
         }
     }
 
