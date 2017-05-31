@@ -10,6 +10,7 @@ import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.Size;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
@@ -73,7 +74,7 @@ public class Ask {
         return this;
     }
 
-    public Ask withRationales(@IntegerRes int... rationalMessages) {
+    public Ask withRationales(@StringRes int... rationalMessages) {
         if (rationalMessages.length == 0) {
             throw new IllegalArgumentException("The Rationale Messages are missing");
         }

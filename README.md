@@ -20,7 +20,7 @@ The android basic code to request permission is to complex and tedious to unders
 
 ```groovy
 dependencies {
-	compile 'com.vistrav:ask:2.4'
+	compile 'com.vistrav:ask:2.5'
 }
 ```
 
@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Ask.on(this)
+                .id(INT_ID_OF_YOUR_REQUEST) // in case you are invoking multiple time Ask from same activity or fragment
                 .forPermissions(Manifest.permission.ACCESS_COARSE_LOCATION
                         , Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .withRationales("Location permission need for map to work properly",
@@ -55,25 +56,25 @@ public class MainActivity extends AppCompatActivity {
 
     //optional
     @AskGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    public void fileAccessGranted() {
+    public void fileAccessGranted(int id) {
         Log.i(TAG, "FILE  GRANTED");
     }
 
     //optional
     @AskDenied(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    public void fileAccessDenied() {
+    public void fileAccessDenied(int id) {
         Log.i(TAG, "FILE  DENiED");
     }
 
     //optional
     @AskGranted(Manifest.permission.ACCESS_COARSE_LOCATION)
-    public void mapAccessGranted() {
+    public void mapAccessGranted(int id) {
         Log.i(TAG, "MAP GRANTED");
     }
 
     //optional
     @AskDenied(Manifest.permission.ACCESS_COARSE_LOCATION)
-    public void mapAccessDenied() {
+    public void mapAccessDenied(int id) {
         Log.i(TAG, "MAP DENIED");
     }
 }
